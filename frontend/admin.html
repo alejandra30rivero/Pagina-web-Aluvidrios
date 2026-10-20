@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración | Cristalería Aluvidrios Victoria Páez</title>
+  <link rel="stylesheet" href="css/style.css?v=2.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* Estilos específicos del Panel de Administración */
+    .admin-body {
+      background-color: #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .admin-navbar {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 16px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .admin-container {
+      max-width: 1300px;
+      margin: 30px auto;
+      padding: 0 20px;
+      flex-grow: 1;
+      width: 100%;
+    }
+    /* Login Screen */
+    .login-wrapper {
+      max-width: 440px;
+      margin: 80px auto;
+      padding: 40px 32px;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      text-align: center;
+    }
+    /* Stats Cards */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .stat-card-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+    .stat-card-number {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.1;
+    }
+    .stat-card-title {
+      font-size: 0.85rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+    /* Tabs */
+    .admin-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 12px;
+    }
+    .admin-tab-btn {
+      padding: 10px 22px;
+      border-radius: 10px;
+      border: none;
+      background: #ffffff;
+      color: #64748b;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .admin-tab-btn.active {
+      background: #0f172a;
+      color: #ffffff;
+    }
+    /* Table */
+    .table-container {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+      border: 1px solid rgba(15, 23, 42, 0.06);
+      overflow-x: auto;
+      padding: 24px;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .data-table th {
+      background: #f8fafc;
+      color: #475569;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 14px 16px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .data-table td {
+      padding: 16px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.92rem;
+      color: #1e293b;
+      vertical-align: middle;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .status-pendiente { background: #fef3c7; color: #b45309; }
+    .status-contactado { background: #e0f2fe; color: #0369a1; }
+    .status-proceso { background: #dbeafe; color: #1d4ed8; }
+    .status-cerrado { background: #dcfce7; color: #15803d; }
+
+    .action-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: #334155;
+      transition: all 0.2s;
+    }
+    .action-btn:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+    .action-btn.btn-wa {
+      background: #25d366;
+      color: #ffffff;
+      border-color: #25d366;
+    }
+    .action-btn.btn-wa:hover {
+      background: #1eb954;
+    }
+    .action-btn.btn-del {
+      color: #ef4444;
+      border-color: #fca5a5;
+    }
+    .action-btn.btn-del:hover {
+      background: #fee2e2;
+    }
+  </style>
+</head>
+<body class="admin-body">
+
+  <!-- ================= BARRA SUPERIOR ADMIN ================= -->
+  <header class="admin-navbar">
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <img src="assets/img/logo.jpeg" alt="Logo AVP" style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 1px solid rgba(255,255,255,0.2);">
+      <div>
+        <h2 style="font-size: 1.15rem; font-weight: 800; line-height: 1.1;">Panel de Gestión Administrativa</h2>
+        <span style="font-size: 0.75rem; color: #94a3b8;">Cristalería Aluvidrios Victoria Páez</span>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <a href="index.html" class="btn btn-secondary btn-sm" style="background: rgba(255,255,255,0.1); color: #ffffff; border: none;">
+        ← Ir a la Web Pública
+      </a>
+      <button id="btn-logout" class="btn btn-sm" style="display: none; background: #ef4444; color: #ffffff;">
+        Cerrar Sesión
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= PANTALLA DE LOGIN ================= -->
+  <div id="login-screen" class="login-wrapper">
+    <img src="assets/img/logo.jpeg" alt="Logo AVP" style="margin: 0 auto 16px auto; width: 64px; height: 64px; border-radius: 16px; object-fit: cover; display: block; box-shadow: 0 6px 18px rgba(2, 132, 199, 0.25);">
+    <h2 style="font-size: 1.5rem; color: #0f172a; margin-bottom: 8px;">Acceso Administrativo</h2>
+    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 24px;">Ingresa tus credenciales para gestionar cotizaciones y mensajes del negocio.</p>
+
+    <form id="login-form">
+      <div class="form-group" style="text-align: left;">
+        <label for="username">Usuario</label>
+        <input type="text" id="username" class="form-control" value="admin" required>
+      </div>
+
+      <div class="form-group" style="text-align: left;">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" class="form-control" value="admin123" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+        Iniciar Sesión
+      </button>
+      <p style="font-size: 0.78rem; color: #94a3b8; margin-top: 16px;">
+        💡 Usuario de prueba: <strong>admin</strong> | Contraseña: <strong>admin123</strong>
+      </p>
+    </form>
+  </div>
+
+  <!-- ================= DASHBOARD PRINCIPAL (OCULTO HASTA LOGIN) ================= -->
+  <main id="dashboard-screen" class="admin-container" style="display: none;">
+    <!-- Fila de Estadísticas -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background: #e0f2fe; color: #0284c7;">📋</div>
+        <div>
+          <div class="stat-card-number" id="stat-total">0</div>
+          <div class="stat-card-title">Total Cotizaciones</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background: #fef3c7; color: #d97706;">⏳</div>
+        <div>
+          <div class="stat-card-number" id="stat-pendientes">0</div>
+          <div class="stat-card-title">Cotizaciones Pendientes</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background: #dcfce7; color: #16a34a;">💵</div>
+        <div>
+          <div class="stat-card-number" id="stat-valor">$0</div>
+          <div class="stat-card-title">Valor Estimado en Cartera</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-icon" style="background: #ede9fe; color: #7c3aed;">💬</div>
+        <div>
+          <div class="stat-card-number" id="stat-mensajes">0</div>
+          <div class="stat-card-title">Mensajes de Contacto</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pestañas de Navegación -->
+    <div class="admin-tabs">
+      <button class="admin-tab-btn active" onclick="cambiarTab('cotizaciones')">Cotizaciones Recibidas</button>
+      <button class="admin-tab-btn" onclick="cambiarTab('mensajes')">Mensajes de Contacto</button>
+      <button class="admin-tab-btn" onclick="cambiarTab('nuevo-proyecto')">+ Agregar Proyecto a Galería</button>
+    </div>
+
+    <!-- 1. Pestaña: Cotizaciones -->
+    <div id="tab-cotizaciones" class="table-container">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <h3 style="font-size: 1.25rem; color: #0f172a;">Solicitudes de Presupuesto Registradas</h3>
+        <button onclick="cargarCotizaciones()" class="btn btn-secondary btn-sm">🔄 Actualizar Lista</button>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Servicio</th>
+            <th>Medidas & Vidrio</th>
+            <th>Estimado</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="cotizaciones-tbody">
+          <!-- Renderizado dinámico desde la API -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 2. Pestaña: Mensajes -->
+    <div id="tab-mensajes" class="table-container" style="display: none;">
+      <h3 style="font-size: 1.25rem; color: #0f172a; margin-bottom: 20px;">Mensajes de Contacto Recibidos</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Remitente</th>
+            <th>Contacto</th>
+            <th>Asunto & Mensaje</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody id="mensajes-tbody">
+          <!-- Renderizado dinámico desde la API -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 3. Pestaña: Nuevo Proyecto -->
+    <div id="tab-nuevo-proyecto" class="table-container" style="display: none; max-width: 700px;">
+      <h3 style="font-size: 1.25rem; color: #0f172a; margin-bottom: 20px;">Publicar Proyecto en la Galería</h3>
+      <form id="nuevo-proyecto-form">
+        <div class="form-group">
+          <label>Título de la Obra *</label>
+          <input type="text" id="proj-titulo" class="form-control" placeholder="Ej. Puerta de Baño Templada Residencias La Granja" required>
+        </div>
+
+        <div class="form-group">
+          <label>Categoría *</label>
+          <select id="proj-categoria" class="form-control" required>
+            <option value="fachadas">Fachadas y Locales</option>
+            <option value="banos">Puertas de Baño</option>
+            <option value="ventanas">Ventanas Panorámicas</option>
+            <option value="barandas">Pasamanos y Escaleras</option>
+            <option value="especiales">Especiales & Peceras</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>URL de la Imagen *</label>
+          <input type="url" id="proj-imagen" class="form-control" placeholder="https://images.unsplash.com/..." required>
+        </div>
+
+        <div class="form-group">
+          <label>Descripción Breve</label>
+          <textarea id="proj-desc" class="form-control" rows="3" placeholder="Detalles de instalación, grosor de vidrio y perfiles..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          Guardar y Publicar en la Web
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

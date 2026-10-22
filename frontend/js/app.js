@@ -242,15 +242,14 @@ async function cargarGaleria() {
     console.warn('Usando proyectos por defecto para galería');
   }
 
-  // Si la API no devolvió proyectos, usamos los datos locales reales
+  // Si la API no devolvió proyectos, usamos los datos locales reales de la galería
   if (!proyectos || proyectos.length === 0) {
     proyectos = [
-      { id: 1, titulo: 'Fachada Comercial en Vidrio Templado', categoria: 'fachadas', descripcion: 'Cerramiento integral moderno con estructura de aluminio y vidrios panorámicos.', imagen_url: 'assets/img/fachadas.jpeg' },
-      { id: 2, titulo: 'Puerta de Baño en Vidrio Templado', categoria: 'banos', descripcion: 'Sistema corredizo con vidrio templado de 8mm y perfiles de acero inoxidable.', imagen_url: 'assets/img/puertas-bano.jpeg' },
-      { id: 3, titulo: 'Ventanas Panorámicas de Aluminio', categoria: 'ventanas', descripcion: 'Ventanas corredizas herméticas con aislamiento acústico y protectores.', imagen_url: 'assets/img/ventanas.jpeg' },
-      { id: 4, titulo: 'Pasamanos y Baranda de Cristal', categoria: 'barandas', descripcion: 'Baranda para escaleras combinando acero inoxidable y vidrio templado.', imagen_url: 'assets/img/barandas.jpeg' },
-      { id: 5, titulo: 'Pecera Panorámica de Alta Resistencia', categoria: 'especiales', descripcion: 'Trabajo a medida con vidrio extra claro templado y sellado estructural.', imagen_url: 'assets/img/peceras.jpeg' },
-      { id: 6, titulo: 'Fachada Arquitectónica Comercial', categoria: 'fachadas', descripcion: 'Cerramiento panorámico moderno en dos niveles con acabados de primera.', imagen_url: 'assets/img/hero.jpeg' }
+      { id: 1, titulo: 'División de Ducha en Vidrio Templado', categoria: 'banos', descripcion: 'Mampara fija en cristal templado de seguridad con herrajes en negro mate.', imagen_url: 'assets/img/galeria-bano.jpg' },
+      { id: 2, titulo: 'Cerramiento Panorámico hacia Jardín', categoria: 'ventanas', descripcion: 'Sistema corredizo de gran formato con cristales panorámicos de alta visibilidad.', imagen_url: 'assets/img/galeria-panoramica.jpg' },
+      { id: 3, titulo: 'Ventanal con Perfilería Blanca Decorativa', categoria: 'ventanas', descripcion: 'Diseño arquitectónico con cuadrícula de aluminio y acabado electrostático.', imagen_url: 'assets/img/galeria-ventana.jpg' },
+      { id: 4, titulo: 'Estructura Exterior y Pasamanos', categoria: 'barandas', descripcion: 'Escaleras y barandas exteriores combinadas con cerramiento superior en vidrio.', imagen_url: 'assets/img/galeria-escalera.jpg' },
+      { id: 5, titulo: 'Puertas Plegables y Divisiones AVP', categoria: 'especiales', descripcion: 'Sistema de puertas plegables para división de espacios interiores.', imagen_url: 'assets/img/galeria-puerta.jpg' }
     ];
   }
 

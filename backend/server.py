@@ -104,6 +104,12 @@ class AluvidriosHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=FRONTEND_DIR, **kwargs)
 
+    def end_headers(self):
+        self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        self.send_header('Pragma', 'no-cache')
+        self.send_header('Expires', '0')
+        super().end_headers()
+
     def _send_json(self, data, status=200):
         self.send_response(status)
         self.send_header('Content-Type', 'application/json; charset=utf-8')
@@ -229,6 +235,35 @@ class AluvidriosHandler(http.server.SimpleHTTPRequestHandler):
             conn.close()
             self._send_json({"success": True, "message": "Mensaje recibido con éxito"}, 201)
 
+        elif path == '/api/proyectos':
+            titulo = data.get('titulo')
+            categoria = data.get('categoria')
+            imagen_url = data.get('imagen_url')
+            descripcion = data.get('descripcion', '')
+            if not titulo or not categoria or not imagen_url:
+                self._send_json({"success": False, "error": "Faltan campos obligatorios (título, categoría e imagen)"}, 400)
+                return
+            conn = sqlite3.connect(DB_PATH)
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO proyectos (titulo, categoria, descripcion, imagen_url)
+                VALUES (?, ?, ?, ?)
+            """, (titulo, categoria, descripcion, imagen_url))
+            new_id = cursor.lastrowid
+            conn.commit()
+            conn.close()
+            self._send_json({
+                "success": True,
+                "data": {
+                    "id": new_id,
+                    "titulo": titulo,
+                    "categoria": categoria,
+                    "descripcion": descripcion,
+                    "imagen_url": imagen_url
+                },
+                "message": "Proyecto agregado al portafolio con éxito"
+            }, 201)
+
         elif path == '/api/admin/login':
             username = data.get('username')
             password = data.get('password')
@@ -266,16 +301,30 @@ class AluvidriosHandler(http.server.SimpleHTTPRequestHandler):
             conn.commit()
             conn.close()
             self._send_json({"success": True, "message": f"Cotización #{cot_id} eliminada"})
+        elif path.startswith('/api/proyectos/'):
+            proj_id = path.split('/')[-1]
+            conn = sqlite3.connect(DB_PATH)
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM proyectos WHERE id=?", (proj_id,))
+            conn.commit()
+            conn.close()
+            self._send_json({"success": True, "message": f"Proyecto #{proj_id} eliminado"})
         else:
             self.send_error(404)
 
 if __name__ == '__main__':
+    import sys
+    if hasattr(sys.stdout, 'reconfigure'):
+        try:
+            sys.stdout.reconfigure(encoding='utf-8')
+        except Exception:
+            pass
     with socketserver.TCPServer(("", PORT), AluvidriosHandler) as httpd:
         print("="*60)
-        print("✨ Cristalería Aluvidrios Victoria Páez - Backend Activo")
-        print(f"🌐 Servidor Web:  http://localhost:{PORT}")
-        print(f"🔐 Panel Admin:   http://localhost:{PORT}/admin.html")
-        print(f"📁 Base de Datos: {DB_PATH}")
+        print("[OK] Cristaleria Aluvidrios Victoria Paez - Backend Activo")
+        print(f"Servidor Web:  http://localhost:{PORT}")
+        print(f"Panel Admin:   http://localhost:{PORT}/admin.html")
+        print(f"Base de Datos: {DB_PATH}")
         print("="*60)
         try:
             httpd.serve_forever()

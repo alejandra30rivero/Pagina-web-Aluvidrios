@@ -271,7 +271,7 @@
     <div class="admin-tabs">
       <button class="admin-tab-btn active" onclick="cambiarTab('cotizaciones')">Cotizaciones Recibidas</button>
       <button class="admin-tab-btn" onclick="cambiarTab('mensajes')">Mensajes de Contacto</button>
-      <button class="admin-tab-btn" onclick="cambiarTab('nuevo-proyecto')">+ Agregar Proyecto a Galería</button>
+      <button class="admin-tab-btn" onclick="cambiarTab('nuevo-proyecto')">📸 Gestionar Galería y Obras</button>
     </div>
 
     <!-- 1. Pestaña: Cotizaciones -->
@@ -318,43 +318,98 @@
       </table>
     </div>
 
-    <!-- 3. Pestaña: Nuevo Proyecto -->
-    <div id="tab-nuevo-proyecto" class="table-container" style="display: none; max-width: 700px;">
-      <h3 style="font-size: 1.25rem; color: #0f172a; margin-bottom: 20px;">Publicar Proyecto en la Galería</h3>
-      <form id="nuevo-proyecto-form">
-        <div class="form-group">
-          <label>Título de la Obra *</label>
-          <input type="text" id="proj-titulo" class="form-control" placeholder="Ej. Puerta de Baño Templada Residencias La Granja" required>
-        </div>
+    <!-- 3. Pestaña: Gestionar Galería y Obras -->
+    <div id="tab-nuevo-proyecto" class="table-container" style="display: none; max-width: 950px;">
+      <!-- Formulario de Publicación -->
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 24px; margin-bottom: 35px;">
+        <h3 style="font-size: 1.25rem; color: #0f172a; margin-bottom: 6px;">+ Publicar Nueva Obra en la Galería</h3>
+        <p style="font-size: 0.88rem; color: #64748b; margin-bottom: 20px;">
+          Agrega nuevos trabajos al portafolio. Puedes seleccionar una foto de tu proyecto o escribir una URL directa.
+        </p>
 
-        <div class="form-group">
-          <label>Categoría *</label>
-          <select id="proj-categoria" class="form-control" required>
-            <option value="fachadas">Fachadas y Locales</option>
-            <option value="banos">Puertas de Baño</option>
-            <option value="ventanas">Ventanas Panorámicas</option>
-            <option value="barandas">Pasamanos y Escaleras</option>
-            <option value="especiales">Especiales & Peceras</option>
-          </select>
-        </div>
+        <form id="nuevo-proyecto-form">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label>Título de la Obra *</label>
+              <input type="text" id="proj-titulo" class="form-control" placeholder="Ej. Ventana Panorámica para Sala" required>
+            </div>
 
-        <div class="form-group">
-          <label>URL de la Imagen *</label>
-          <input type="url" id="proj-imagen" class="form-control" placeholder="https://images.unsplash.com/..." required>
-        </div>
+            <div class="form-group">
+              <label>Categoría *</label>
+              <select id="proj-categoria" class="form-control" required>
+                <option value="fachadas">Fachadas y Locales</option>
+                <option value="banos">Puertas de Baño</option>
+                <option value="ventanas">Ventanas Panorámicas</option>
+                <option value="barandas">Pasamanos y Escaleras</option>
+                <option value="especiales">Especiales & Peceras</option>
+              </select>
+            </div>
+          </div>
 
-        <div class="form-group">
-          <label>Descripción Breve</label>
-          <textarea id="proj-desc" class="form-control" rows="3" placeholder="Detalles de instalación, grosor de vidrio y perfiles..."></textarea>
-        </div>
+          <div class="form-group">
+            <label>Foto de la Obra *</label>
+            <div style="display: flex; gap: 10px; margin-bottom: 8px; flex-wrap: wrap;">
+              <input type="text" id="proj-imagen" class="form-control" style="flex: 1; min-width: 250px;" placeholder="assets/img/galeria-ventana.jpg o enlace web..." required oninput="actualizarVistaPrevia()">
+              <select class="form-control" style="max-width: 280px;" onchange="seleccionarFotoRapida(this.value)">
+                <option value="">⚡ Seleccionar foto existente...</option>
+                <option value="assets/img/galeria-bano.jpg">🚿 Ducha Cristal Templado</option>
+                <option value="assets/img/galeria-panoramica.jpg">🌿 Ventanal Corredizo Jardín</option>
+                <option value="assets/img/galeria-ventana.jpg">🪟 Ventana Cuadrícula Blanca</option>
+                <option value="assets/img/galeria-escalera.jpg">🪜 Escalera y Estructura Exterior</option>
+                <option value="assets/img/galeria-puerta.jpg">🚪 Puerta Plegable AVP</option>
+                <option value="assets/img/fachadas.jpeg">🏢 Fachada Comercial 2 Pisos</option>
+                <option value="assets/img/puertas-bano.jpeg">🚿 Puerta Baño Corrediza</option>
+                <option value="assets/img/ventanas.jpeg">🪟 Ventana Panorámica Oscura</option>
+                <option value="assets/img/barandas.jpeg">🪜 Pasamanos Acero Inox</option>
+                <option value="assets/img/peceras.jpeg">🐠 Pecera Panorámica</option>
+              </select>
+            </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%;">
-          Guardar y Publicar en la Web
-        </button>
-      </form>
+            <!-- Vista Previa en Vivo -->
+            <div id="preview-container" style="display: none; margin: 10px 0; align-items: center; gap: 14px; padding: 12px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px;">
+              <img id="img-preview" src="" style="width: 70px; height: 55px; object-fit: cover; border-radius: 6px;">
+              <span id="preview-text" style="font-size: 0.85rem; color: #16a34a; font-weight: 700;">✓ Vista previa cargada correctamente</span>
+            </div>
+
+            <p style="font-size: 0.78rem; color: #64748b;">
+              ⚠️ <em>Nota: No pegues rutas directas de tu disco como <code>C:\Users\...</code> ni enlaces de reels de Instagram (el navegador los bloquea). Usa rutas locales como <code>assets/img/...</code> o el selector rápido.</em>
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label>Descripción Breve</label>
+            <textarea id="proj-desc" class="form-control" rows="2" placeholder="Detalles del vidrio templado, perfiles y acabados..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            + Guardar y Publicar en la Web
+          </button>
+        </form>
+      </div>
+
+      <!-- Tabla para Quitar / Eliminar Obras de la Galería -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+        <h3 style="font-size: 1.25rem; color: #0f172a;">Obras Publicadas Actualmente en la Galería</h3>
+        <button onclick="cargarProyectosAdmin()" class="btn btn-secondary btn-sm">🔄 Recargar Lista</button>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Miniatura</th>
+            <th>Título de la Obra</th>
+            <th>Categoría</th>
+            <th>Descripción</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="proyectos-admin-tbody">
+          <!-- Renderizado dinámico con botón para eliminar -->
+        </tbody>
+      </table>
     </div>
   </main>
 
-  <script src="js/admin.js"></script>
+  <script src="js/admin.js?v=2.0"></script>
 </body>
 </html>

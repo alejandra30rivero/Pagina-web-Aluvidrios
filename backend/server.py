@@ -314,19 +314,56 @@ class AluvidriosHandler(http.server.SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     import sys
+    import webbrowser
+    import threading
+
     if hasattr(sys.stdout, 'reconfigure'):
         try:
             sys.stdout.reconfigure(encoding='utf-8')
         except Exception:
             pass
-    with socketserver.TCPServer(("", PORT), AluvidriosHandler) as httpd:
+
+    # Soporte compatible para Python 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13
+    if hasattr(http.server, 'ThreadingHTTPServer'):
+        ServerClass = http.server.ThreadingHTTPServer
+    else:
+        class ServerClass(socketserver.ThreadingMixIn, http.server.HTTPServer):
+            daemon_threads = True
+
+    try:
+        httpd = ServerClass(("", PORT), AluvidriosHandler)
+        httpd.allow_reuse_address = True
+    except OSError:
         print("="*60)
-        print("[OK] Cristaleria Aluvidrios Victoria Paez - Backend Activo")
-        print(f"Servidor Web:  http://localhost:{PORT}")
-        print(f"Panel Admin:   http://localhost:{PORT}/admin.html")
-        print(f"Base de Datos: {DB_PATH}")
+        print(f"[AVISO] El puerto {PORT} ya esta en uso.")
+        print(f"Abriendo la web directamente en: http://localhost:{PORT}")
         print("="*60)
         try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            print("\nServidor detenido.")
+            webbrowser.open(f'http://localhost:{PORT}')
+        except Exception:
+            pass
+        input("\nPresione ENTER para salir...")
+        sys.exit(0)
+
+    print("="*60)
+    print("[OK] Cristaleria Aluvidrios Victoria Paez - Backend Activo")
+    print(f"Servidor Web:  http://localhost:{PORT}")
+    print(f"Panel Admin:   http://localhost:{PORT}/admin.html")
+    print(f"Base de Datos: {DB_PATH}")
+    print("="*60)
+    print("El servidor esta listo. Mantenga esta ventana negra abierta mientras use la pagina.")
+    print("Para detener el servidor: presione Ctrl + C o cierre esta ventana.")
+
+    # Abrir navegador automaticamente una vez que el socket ya esta escuchando
+    def _abrir_navegador():
+        try:
+            webbrowser.open(f'http://localhost:{PORT}')
+        except Exception:
+            pass
+
+    threading.Timer(0.7, _abrir_navegador).start()
+
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("\nServidor detenido.")

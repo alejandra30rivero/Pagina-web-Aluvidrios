@@ -1,18 +1,19 @@
 @echo off
-chcp 65001 > nul
-title Servidor Aluvidrios Victoria Páez (AVP)
+title Servidor Aluvidrios Victoria Paez (AVP)
+cls
 
 echo ======================================================================
-echo    CRISTALERÍA ALUVIDRIOS VICTORIA PÁEZ (AVP)
+echo    CRISTALERIA ALUVIDRIOS VICTORIA PAEZ (AVP)
 echo    Iniciando Servidor Web y Base de Datos...
 echo ======================================================================
 echo.
 
 cd /d "%~dp0backend"
 
-:: Probamos primero con Python ya que está instalado de forma nativa en tu equipo
 echo [*] Iniciando servidor con Python...
-start "" http://localhost:3000
+echo [*] Tu navegador se abrira automaticamente en http://localhost:3000
+echo.
+
 python server.py
 
 if %errorlevel% neq 0 (
@@ -23,10 +24,12 @@ if %errorlevel% neq 0 (
 
 if %errorlevel% neq 0 (
     echo.
-    echo [*] Probando con Node.js...
-    node server.js
+    echo ======================================================================
+    echo [ERROR] No se pudo iniciar el servidor.
+    echo Verifique que Python este instalado en su sistema.
+    echo ======================================================================
 )
 
 echo.
-echo Presione cualquier tecla para cerrar.
+echo Presione cualquier tecla para cerrar esta ventana.
 pause
